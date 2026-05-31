@@ -60,6 +60,11 @@ app.post('/api/patient-follow-up', async (req, res) => {
 
     if (DB_PROVIDER === 'mysql') {
       await pool.execute(
+        'INSERT INTO patients (uhid) VALUES (?) ON DUPLICATE KEY UPDATE uhid = VALUES(uhid)',
+        [uhid]
+      );
+
+      await pool.execute(
         'INSERT INTO patient_followups (uhid, diagnosis, severity, next_follow_up) VALUES (?, ?, ?, ?)',
         [uhid, diagnosis, severity, nextFollowUp]
       );
@@ -73,6 +78,27 @@ app.post('/api/patient-follow-up', async (req, res) => {
     res.status(500).json({ error: 'Failed to submit follow-up' });
   }
 });
+
+app.get('/api/patient-follow-ups', async (req, res) => {
+  try {
+    if (DB_PROVIDER === 'mysql') {
+      const [rows] = await pool.execute(
+        `SELECT p.id AS patientId, p.uhid, pf.diagnosis, pf.severity, pf.next_follow_up AS nextFollowUp, pf.created_at AS createdAt
+         FROM patients p
+         INNER JOIN patient_followups pf ON pf.uhid = p.uhid
+         ORDER BY pf.created_at DESC`
+      );
+
+      return res.json(rows);
+    }
+
+    const followUps = await PatientFollowUp.find().sort({ createdAt: -1 });
+    return res.json(followUps);
+  } catch (err) {
+    return res.status(500).json({ error: 'Failed to fetch patient follow-ups' });
+  }
+});
+
 // View all callback requests
 app.get('/api/request-callbacks', async (req, res) => {
   try {

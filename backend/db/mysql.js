@@ -23,6 +23,14 @@ async function initializeMySqlSchema() {
   `);
 
   await pool.query(`
+    CREATE TABLE IF NOT EXISTS patients (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      uhid VARCHAR(50) NOT NULL UNIQUE,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  await pool.query(`
     CREATE TABLE IF NOT EXISTS patient_followups (
       id INT AUTO_INCREMENT PRIMARY KEY,
       uhid VARCHAR(50) NOT NULL,
