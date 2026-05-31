@@ -18,7 +18,7 @@ Reduces manual work and improves efficiency in hospital management.
 
  👥 Contributors
 
-- **Chandresh G U** – Frontend, Backend Logic, Integration  
+- **Chandresh G U** – Frontend, Database ( SQL )
 
 
 ## 💡 Future Improvements
