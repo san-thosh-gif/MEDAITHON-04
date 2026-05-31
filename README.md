@@ -12,6 +12,21 @@ Efficient hospital workflow handling
 Frontend: HTML, CSS, JavaScript
 Backend: Node.js, Express
 Database: SQL or MongoDB 
+
+## MySQL Setup (Backend)
+
+1. Create MySQL database/tables using `backend/sql/schema.sql`.
+2. Go to backend folder and install dependencies.
+3. Add environment values from `backend/.env.example`.
+4. Start backend with `npm run dev`.
+
+The backend supports two database modes through `DB_PROVIDER`:
+
+- `DB_PROVIDER=mongo` uses MongoDB models.
+- `DB_PROVIDER=mysql` uses MySQL tables and SQL queries.
+
+SQL query examples used for DQL testing are in `backend/sql/dql_examples.sql`.
+
  Use Case
 
 Reduces manual work and improves efficiency in hospital management.
