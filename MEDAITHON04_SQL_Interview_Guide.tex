@@ -1,0 +1,1051 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf-8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{tcolorbox}
+\usepackage{enumerate}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{textcomp}
+
+% Configure listings for SQL code
+\lstset{
+    language=SQL,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray},
+    stringstyle=\color{red},
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=4,
+    frame=lines,
+    rulecolor=\color{black},
+    numbers=left,
+    numberstyle=\tiny,
+    stepnumber=1
+}
+
+% Header and footer
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{MEDAITHON-04 Project}
+\rhead{Interview Preparation}
+\cfoot{\thepage}
+
+\title{\textbf{\Large MEDAITHON-04 Smart Hospital Management}\\
+\textbf{Full-Stack Healthcare Management System}\\
+\normalsize Interview Guide \& SQL Developer Role}
+\author{SQL Developer \& Database Specialist}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+% ============================================================================
+\section{Project Overview}
+% ============================================================================
+
+\subsection{What is MEDAITHON-04?}
+
+MEDAITHON-04 is a \textbf{Smart Hospital Management System} built during a 50-hour hackathon. It is a full-stack web application designed to:
+
+\begin{itemize}
+    \item Manage \textbf{patient records} and registration
+    \item Schedule \textbf{medical appointments} efficiently
+    \item Store \textbf{digital patient records} securely
+    \item Handle \textbf{follow-up consultations} and diagnostics
+    \item Track \textbf{callback requests} for patient communication
+    \item Use AI for \textbf{aorta disease detection} (Aorta AI trained model)
+\end{itemize}
+
+\subsection{Real-World Application}
+
+\begin{tcolorbox}[colback=blue!10,colframe=blue!50!black,title=Healthcare Use Case]
+Hospital receives patient $\rightarrow$ Registers in system $\rightarrow$ AI analyzes health data $\rightarrow$ Schedules follow-ups $\rightarrow$ Manages appointments \textbf{automatically}
+\end{tcolorbox}
+
+\subsection{Project Technology Stack}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Component} & \textbf{Technology} & \textbf{Purpose} \\
+\hline
+Frontend & HTML, CSS, JavaScript (57.8 percent) & User Interface \\
+Frontend & TypeScript (34.5 percent) & Type-Safe JavaScript \\
+Backend & Node.js, Express & Server Application \\
+Database & MySQL / MongoDB & Data Storage \\
+AI Model & Python (Trained Model) & Disease Detection \\
+\hline
+\end{tabular}
+\end{table}
+
+% ============================================================================
+\section{Your Role: SQL Developer and Database Specialist}
+% ============================================================================
+
+\subsection{Responsibilities}
+
+Your primary responsibilities are:
+
+\begin{enumerate}
+    \item \textbf{Design and implement database schema} (tables, relationships)
+    \item \textbf{Write SQL queries} for data retrieval and manipulation
+    \item \textbf{Optimize database performance} (indexing, query optimization)
+    \item \textbf{Ensure data integrity} and consistency
+    \item \textbf{Manage database transactions} and constraints
+    \item \textbf{Create views and procedures} for complex queries
+    \item \textbf{Handle database maintenance} and backups
+\end{enumerate}
+
+\subsection{Tools You Use}
+
+\begin{tcolorbox}[colback=yellow!10,colframe=orange!50!black,title=Your Toolkit]
+\begin{itemize}
+    \item \textbf{MySQL}: Relational Database Management System
+    \item \textbf{SQL}: Database Query Language
+    \item \textbf{MySQL Workbench}: Database Design and Management
+    \item \textbf{Command Line}: MySQL CLI for administration
+\end{itemize}
+\end{tcolorbox}
+
+% ============================================================================
+\section{Database Schema (The Heart of Your Work)}
+% ============================================================================
+
+\subsection{Overview}
+
+The MEDAITHON-04 system uses three main database tables:
+
+\begin{tcolorbox}[colback=cyan!10,colframe=cyan!50!black,title=Database Tables]
+\begin{enumerate}
+    \item \textbf{callback\_requests} - Store patient callback requests
+    \item \textbf{patients} - Store patient registration information
+    \item \textbf{patient\_followups} - Store follow-up consultation data
+\end{enumerate}
+\end{tcolorbox}
+
+\subsection{Table 1: callback\_requests}
+
+\textbf{Purpose:} Store callback requests from patients who want the hospital to contact them
+
+\begin{lstlisting}[caption={callback\_requests Table Schema}]
+CREATE TABLE IF NOT EXISTS callback_requests (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(120) NOT NULL,
+  mobile VARCHAR(20) NOT NULL,
+  otp VARCHAR(20) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+\end{lstlisting}
+
+\textbf{Columns:}
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Column} & \textbf{Type} & \textbf{Constraints} & \textbf{Purpose} \\
+\hline
+id & INT & AUTO INCREMENT, PRIMARY KEY & Unique identifier \\
+name & VARCHAR(120) & NOT NULL & Patient name \\
+mobile & VARCHAR(20) & NOT NULL & Phone number \\
+otp & VARCHAR(20) & NOT NULL & One-time password \\
+created\_at & TIMESTAMP & DEFAULT CURRENT\_TIMESTAMP & Record creation time \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Table 2: patients}
+
+\textbf{Purpose:} Store main patient registration data
+
+\begin{lstlisting}[caption={patients Table Schema}]
+CREATE TABLE IF NOT EXISTS patients (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  uhid VARCHAR(50) NOT NULL UNIQUE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+\end{lstlisting}
+
+\textbf{Columns:}
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Column} & \textbf{Type} & \textbf{Constraints} & \textbf{Purpose} \\
+\hline
+id & INT & AUTO INCREMENT, PRIMARY KEY & Unique identifier \\
+uhid & VARCHAR(50) & NOT NULL, UNIQUE & Universal Health ID \\
+created\_at & TIMESTAMP & DEFAULT CURRENT\_TIMESTAMP & Registration time \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{Note:} UHID (Universal Health ID) is a unique identifier assigned to each patient across the healthcare system.
+
+\subsection{Table 3: patient\_followups}
+
+\textbf{Purpose:} Store follow-up consultation records and diagnosis information
+
+\begin{lstlisting}[caption={patient\_followups Table Schema}]
+CREATE TABLE IF NOT EXISTS patient_followups (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  uhid VARCHAR(50) NOT NULL,
+  diagnosis TEXT NOT NULL,
+  severity VARCHAR(50) NOT NULL,
+  next_follow_up VARCHAR(120) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+\end{lstlisting}
+
+\textbf{Columns:}
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Column} & \textbf{Type} & \textbf{Constraints} & \textbf{Purpose} \\
+\hline
+id & INT & AUTO INCREMENT, PRIMARY KEY & Unique identifier \\
+uhid & VARCHAR(50) & NOT NULL & Links to patient \\
+diagnosis & TEXT & NOT NULL & Medical diagnosis \\
+severity & VARCHAR(50) & NOT NULL & Severity level \\
+next\_follow\_up & VARCHAR(120) & NOT NULL & Next appointment date \\
+created\_at & TIMESTAMP & DEFAULT CURRENT\_TIMESTAMP & Record creation time \\
+\hline
+\end{tabular}
+\end{table}
+
+% ============================================================================
+\section{SQL Queries Used in Project}
+% ============================================================================
+
+\subsection{Query 1: Retrieve All Callback Requests}
+
+\textbf{Purpose:} Fetch all callback requests sorted by creation date
+
+\textbf{Use Case:} Hospital staff views pending callback requests
+
+\begin{lstlisting}[caption={Get All Callback Requests}]
+SELECT id, name, mobile, otp, created_at
+FROM callback_requests
+ORDER BY created_at DESC;
+\end{lstlisting}
+
+\textbf{Explanation:}
+\begin{itemize}
+    \item \textbf{SELECT}: Retrieves id, name, mobile, otp, and created\_at columns
+    \item \textbf{FROM}: Source table is callback\_requests
+    \item \textbf{ORDER BY}: Sorts by created\_at in descending order (newest first)
+    \item \textbf{DESC}: Descending order (most recent first)
+\end{itemize}
+
+---
+
+\subsection{Query 2: Retrieve All Patient Followups}
+
+\textbf{Purpose:} Fetch all patient follow-up records
+
+\textbf{Use Case:} Doctor views all patient follow-ups for the day
+
+\begin{lstlisting}[caption={Get All Patient Followups}]
+SELECT id, uhid, diagnosis, severity, next_follow_up, created_at
+FROM patient_followups
+ORDER BY created_at DESC;
+\end{lstlisting}
+
+---
+
+\subsection{Query 3: Count Patients by Severity}
+
+\textbf{Purpose:} Get statistical data on patient severity levels
+
+\textbf{Use Case:} Hospital administration wants severity breakdown
+
+\begin{lstlisting}[caption={Patient Count by Severity}]
+SELECT severity, COUNT(*) AS total_patients
+FROM patient_followups
+GROUP BY severity
+ORDER BY total_patients DESC;
+\end{lstlisting}
+
+\textbf{Explanation:}
+\begin{itemize}
+    \item \textbf{GROUP BY}: Groups records by severity level
+    \item \textbf{COUNT(*)}: Counts total records in each group
+    \item \textbf{AS total\_patients}: Alias for the count column
+    \item \textbf{ORDER BY}: Sorts by count in descending order
+\end{itemize}
+
+\textbf{Example Output:}
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Severity} & \textbf{Total\_patients} \\
+\hline
+High & 25 \\
+Medium & 18 \\
+Low & 12 \\
+\hline
+\end{tabular}
+\end{table}
+
+---
+
+\subsection{Query 4: Upcoming Follow-ups}
+
+\textbf{Purpose:} Find patients with upcoming follow-up dates
+
+\textbf{Use Case:} Schedule appointments for next week
+
+\begin{lstlisting}[caption={Upcoming Patient Followups}]
+SELECT uhid, diagnosis, next_follow_up
+FROM patient_followups
+WHERE next_follow_up >= CURDATE();
+\end{lstlisting}
+
+\textbf{Explanation:}
+\begin{itemize}
+    \item \textbf{WHERE}: Filters records based on condition
+    \item \textbf{next\_follow\_up}: Column containing follow-up date
+    \item \textbf{CURDATE()}: Current system date
+    \item \textbf{>=}: Greater than or equal (today or later)
+\end{itemize}
+
+---
+
+\subsection{Query 5: Join Patients with Followups}
+
+\textbf{Purpose:} Link patient data with their follow-up records
+
+\textbf{Use Case:} Get complete patient information with all follow-ups
+
+\begin{lstlisting}[caption={Patient and Followup Information (JOIN)}]
+SELECT p.id AS patient_id, p.uhid, pf.diagnosis, 
+       pf.severity, pf.next_follow_up, pf.created_at
+FROM patients p
+INNER JOIN patient_followups pf ON pf.uhid = p.uhid
+ORDER BY pf.created_at DESC;
+\end{lstlisting}
+
+\textbf{Explanation:}
+\begin{itemize}
+    \item \textbf{FROM patients p}: Source table (aliased as p)
+    \item \textbf{INNER JOIN}: Combines rows from two tables
+    \item \textbf{ON pf.uhid = p.uhid}: Join condition using UHID
+    \item \textbf{AS patient\_id}: Alias for column
+\end{itemize}
+
+---
+
+\subsection{Query 6: Follow-up Count by Patient and Severity}
+
+\textbf{Purpose:} Statistical analysis of follow-ups per patient
+
+\textbf{Use Case:} Identify high-maintenance patients
+
+\begin{lstlisting}[caption={Followup Count Analysis}]
+SELECT p.uhid, pf.severity, COUNT(*) AS followup_count
+FROM patients p
+INNER JOIN patient_followups pf ON pf.uhid = p.uhid
+GROUP BY p.uhid, pf.severity
+ORDER BY followup_count DESC;
+\end{lstlisting}
+
+\textbf{Explanation:}
+\begin{itemize}
+    \item \textbf{GROUP BY p.uhid, pf.severity}: Groups by patient and severity
+    \item \textbf{COUNT(*)}: Counts follow-ups per group
+    \item Helps identify patients needing more attention
+\end{itemize}
+
+% ============================================================================
+\section{SQL Concepts Used in This Project}
+% ============================================================================
+
+\subsection{1. Data Definition Language (DDL)}
+
+\textbf{Definition:} SQL commands to define database structure
+
+\textbf{Commands Used:}
+\begin{itemize}
+    \item \textbf{CREATE DATABASE}: Create new database
+    \item \textbf{CREATE TABLE}: Define table structure
+    \item \textbf{ALTER TABLE}: Modify existing tables
+\end{itemize}
+
+---
+
+\subsection{2. Data Query Language (DQL)}
+
+\textbf{Definition:} SQL commands to retrieve data
+
+\textbf{Commands Used:}
+\begin{itemize}
+    \item \textbf{SELECT}: Retrieve specific columns
+    \item \textbf{FROM}: Specify table source
+    \item \textbf{WHERE}: Filter rows based on conditions
+    \item \textbf{ORDER BY}: Sort results
+    \item \textbf{GROUP BY}: Group rows for aggregation
+\end{itemize}
+
+---
+
+\subsection{3. Constraints}
+
+\textbf{Definition:} Rules enforced on data
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Constraint} & \textbf{Purpose} & \textbf{Usage} \\
+\hline
+PRIMARY KEY & Unique identifier & id column \\
+AUTO INCREMENT & Auto generate ID & Auto ID assignment \\
+NOT NULL & Required field & name, mobile \\
+UNIQUE & No duplicates & uhid \\
+DEFAULT & Default value & created\_at timestamp \\
+\hline
+\end{tabular}
+\end{table}
+
+---
+
+\subsection{4. Joins}
+
+\textbf{Definition:} Combine data from multiple tables
+
+\begin{itemize}
+    \item \textbf{INNER JOIN}: Returns rows where both tables match
+    \item Example: Link patients with their follow-ups using UHID
+\end{itemize}
+
+---
+
+\subsection{5. Aggregate Functions}
+
+\textbf{Definition:} Functions that perform calculations on data
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Function} & \textbf{Purpose} & \textbf{Example} \\
+\hline
+COUNT(*) & Count total rows & COUNT(*) patients \\
+SUM() & Sum numeric values & SUM(amount) \\
+AVG() & Average values & AVG(age) \\
+MAX() & Maximum value & MAX(created\_at) \\
+MIN() & Minimum value & MIN(created\_at) \\
+\hline
+\end{tabular}
+\end{table}
+
+% ============================================================================
+\section{Project Pipeline: Step-by-Step Explanation}
+% ============================================================================
+
+\subsection{Step 1: Database Setup}
+
+\subsubsection{Non-Technical Explanation}
+
+Setting up the database is like \textbf{building the storage rooms} for the hospital:
+
+\begin{tcolorbox}[colback=green!10,colframe=green!50!black,title=Setup Process]
+\begin{enumerate}
+    \item Create a database named medaithon57
+    \item Create tables to store different types of information
+    \item Set up rules for data (constraints)
+    \item Make sure data is organized and consistent
+\end{enumerate}
+\end{tcolorbox}
+
+\subsubsection{Technical Explanation}
+
+\begin{lstlisting}[caption={Database Setup (Your Work!)}]
+-- Step 1: Create database
+CREATE DATABASE IF NOT EXISTS medaithon57;
+
+-- Step 2: Use the database
+USE medaithon57;
+
+-- Step 3: Create tables with constraints
+CREATE TABLE IF NOT EXISTS callback_requests (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(120) NOT NULL,
+  mobile VARCHAR(20) NOT NULL,
+  otp VARCHAR(20) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Repeat for other tables...
+\end{lstlisting}
+
+---
+
+\subsection{Step 2: Data Insertion}
+
+\subsubsection{Non-Technical Explanation}
+
+After setting up tables, data flows into the system:
+
+\begin{itemize}
+    \item Patient registers using the web form
+    \item Form data goes to backend (Node.js)
+    \item Backend inserts data into database
+    \item Data is now stored permanently
+\end{itemize}
+
+\subsubsection{Technical Explanation}
+
+\begin{lstlisting}[caption={Inserting Data (Backend calls this)}]
+-- Insert callback request
+INSERT INTO callback_requests (name, mobile, otp)
+VALUES ('John Doe', '9876543210', '123456');
+
+-- Insert patient
+INSERT INTO patients (uhid)
+VALUES ('UH-2025-00001');
+
+-- Insert patient follow-up
+INSERT INTO patient_followups 
+       (uhid, diagnosis, severity, next_follow_up)
+VALUES ('UH-2025-00001', 'Aorta Disease', 'High', 
+        '2025-06-15');
+\end{lstlisting}
+
+---
+
+\subsection{Step 3: Data Retrieval (Your Main Work!)}
+
+\subsubsection{Non-Technical Explanation}
+
+Hospital staff needs to view patient data:
+
+\begin{itemize}
+    \item Doctor clicks ``View Patients''
+    \item Frontend asks backend for data
+    \item Backend runs SQL query on database
+    \item Results displayed in table format
+\end{itemize}
+
+\subsubsection{Technical Explanation}
+
+\begin{lstlisting}[caption={Retrieving Data (Your SQL Queries)}]
+-- Show all patients needing follow-up today
+SELECT uhid, diagnosis, severity, next_follow_up
+FROM patient_followups
+WHERE next_follow_up = CURDATE();
+
+-- Show callback requests by date
+SELECT name, mobile, created_at
+FROM callback_requests
+WHERE DATE(created_at) = CURDATE()
+ORDER BY created_at ASC;
+\end{lstlisting}
+
+---
+
+\subsection{Step 4: Data Analysis and Reporting}
+
+\subsubsection{Non-Technical Explanation}
+
+Hospital management needs statistics:
+
+\begin{itemize}
+    \item ``How many severe cases this week?''
+    \item ``Which patients need follow-up?''
+    \item ``How many callbacks completed?''
+\end{itemize}
+
+\subsubsection{Technical Explanation}
+
+\begin{lstlisting}[caption={Analytics Queries}]
+-- Cases by severity (for reporting)
+SELECT severity, COUNT(*) AS count
+FROM patient_followups
+WHERE DATE(created_at) >= DATE_SUB(CURDATE(), 
+                                   INTERVAL 7 DAY)
+GROUP BY severity;
+
+-- Patient with most follow-ups
+SELECT uhid, COUNT(*) AS total_followups
+FROM patient_followups
+GROUP BY uhid
+ORDER BY total_followups DESC
+LIMIT 10;
+\end{lstlisting}
+
+% ============================================================================
+\section{Interview Questions and Answers}
+% ============================================================================
+
+\subsection{Q1: What is the main purpose of this project?}
+
+\textbf{Answer:}
+
+MEDAITHON-04 is a \textbf{Smart Hospital Management System} built during a 50-hour hackathon to:
+
+\begin{enumerate}
+    \item Manage patient records digitally
+    \item Schedule and track medical appointments
+    \item Store patient follow-up information
+    \item Use AI (Aorta AI) for disease detection
+    \item Improve hospital efficiency and reduce manual work
+\end{enumerate}
+
+\textbf{Impact:} Hospitals can serve patients faster, reduce paperwork, and provide better care through organized data management.
+
+---
+
+\subsection{Q2: What is your role in this project?}
+
+\textbf{Answer:}
+
+My role is \textbf{SQL Developer and Database Specialist}. My responsibilities include:
+
+\begin{enumerate}
+    \item \textbf{Design database schema}: Created 3 tables (callback\_requests, patients, patient\_followups)
+    \item \textbf{Write SQL queries}: For data retrieval, insertion, updating
+    \item \textbf{Optimize performance}: Create indexes, optimize joins
+    \item \textbf{Ensure data integrity}: Apply constraints and validations
+    \item \textbf{Create reports}: Generate statistical queries for management
+    \item \textbf{Maintain database}: Backups, security, updates
+\end{enumerate}
+
+\textbf{Focus:} Making sure data is stored securely, retrieved efficiently, and remains consistent.
+
+---
+
+\subsection{Q3: Explain the database schema you designed}
+
+\textbf{Answer:}
+
+The database has \textbf{3 main tables}:
+
+\begin{enumerate}
+    \item \textbf{callback\_requests}
+    \begin{itemize}
+        \item Stores patient callback requests
+        \item Contains: id, name, mobile, otp, created\_at
+        \item Purpose: Track patient contact requests
+    \end{itemize}
+    
+    \item \textbf{patients}
+    \begin{itemize}
+        \item Core patient registration table
+        \item Contains: id, uhid (unique ID), created\_at
+        \item UHID ensures patient uniqueness across hospital
+    \end{itemize}
+    
+    \item \textbf{patient\_followups}
+    \begin{itemize}
+        \item Follow-up consultation records
+        \item Contains: id, uhid, diagnosis, severity, next\_follow\_up, created\_at
+        \item Links to patients via UHID
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Relationships:} patients.uhid connects to patient\_followups.uhid (One-to-Many)
+
+---
+
+\subsection{Q4: Write a query to find high-severity patients}
+
+\textbf{Answer:}
+
+\begin{lstlisting}
+SELECT p.uhid, pf.diagnosis, pf.severity, pf.next_follow_up
+FROM patients p
+INNER JOIN patient_followups pf ON p.uhid = pf.uhid
+WHERE pf.severity = 'High'
+ORDER BY pf.created_at DESC;
+\end{lstlisting}
+
+\textbf{Explanation:}
+\begin{itemize}
+    \item \textbf{JOIN}: Combines patient and follow-up data
+    \item \textbf{WHERE pf.severity = 'High'}: Filters only high severity
+    \item \textbf{ORDER BY}: Shows most recent first
+    \item \textbf{Result}: All high-severity patients ready for urgent attention
+\end{itemize}
+
+---
+
+\subsection{Q5: How would you optimize this query?}
+
+\textbf{Answer:}
+
+\begin{lstlisting}[caption={Optimized Query}]
+-- Create index on severity for faster filtering
+CREATE INDEX idx_severity ON patient_followups(severity);
+
+-- Create index on uhid for faster joins
+CREATE INDEX idx_uhid ON patient_followups(uhid);
+
+-- Now the query runs faster
+SELECT p.uhid, pf.diagnosis, pf.severity, pf.next_follow_up
+FROM patients p
+INNER JOIN patient_followups pf ON p.uhid = pf.uhid
+WHERE pf.severity = 'High'
+ORDER BY pf.created_at DESC;
+\end{lstlisting}
+
+\textbf{Optimization Techniques:}
+\begin{itemize}
+    \item \textbf{Indexing}: Speed up searches and joins
+    \item \textbf{Select specific columns}: Don't use SELECT *
+    \item \textbf{Use LIMIT}: Limit results if possible
+    \item \textbf{Avoid multiple JOINs}: Use indexed foreign keys
+\end{itemize}
+
+---
+
+\subsection{Q6: Write a query for callback statistics}
+
+\textbf{Answer:}
+
+\begin{lstlisting}[caption={Callback Statistics}]
+SELECT 
+  DATE(created_at) AS date,
+  COUNT(*) AS total_callbacks,
+  COUNT(DISTINCT mobile) AS unique_patients
+FROM callback_requests
+GROUP BY DATE(created_at)
+ORDER BY date DESC;
+\end{lstlisting}
+
+\textbf{Shows:}
+\begin{itemize}
+    \item Callbacks per day
+    \item Unique patients requesting callback
+    \item Trend analysis for management
+\end{itemize}
+
+---
+
+\subsection{Q7: How do you ensure data integrity?}
+
+\textbf{Answer:}
+
+\begin{enumerate}
+    \item \textbf{NOT NULL constraints}: Ensure required fields
+    \item \textbf{UNIQUE constraints}: Prevent duplicate UHIDs
+    \item \textbf{PRIMARY KEY}: Every row uniquely identified
+    \item \textbf{FOREIGN KEY}: Link related tables correctly
+    \item \textbf{Data validation}: Check data types and ranges
+    \item \textbf{Transactions}: Atomic operations (all or nothing)
+\end{enumerate}
+
+\begin{lstlisting}[caption={Example: Transaction}]
+START TRANSACTION;
+
+INSERT INTO patients (uhid) VALUES ('UH-2025-00002');
+INSERT INTO patient_followups 
+  (uhid, diagnosis, severity, next_follow_up)
+VALUES ('UH-2025-00002', 'Aorta Disease', 'Medium', 
+        '2025-06-20');
+
+COMMIT; -- Both succeed or both fail
+\end{lstlisting}
+
+---
+
+\subsection{Q8: Explain the JOIN operation used in this project}
+
+\textbf{Answer:}
+
+\textbf{JOIN Purpose:} Combine data from two related tables
+
+\begin{lstlisting}[caption={JOIN Example}]
+SELECT p.uhid, pf.diagnosis, pf.severity
+FROM patients p
+INNER JOIN patient_followups pf ON p.uhid = pf.uhid;
+\end{lstlisting}
+
+\textbf{How it works:}
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{patients.uhid} & \textbf{JOIN} & \textbf{patient\_followups.uhid} \\
+\hline
+UH-001 & matches & UH-001 \\
+UH-002 & matches & UH-002 \\
+UH-003 & matches & UH-003 \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{Types of JOINs:}
+\begin{itemize}
+    \item \textbf{INNER JOIN}: Only matching records
+    \item \textbf{LEFT JOIN}: All from left table plus matches
+    \item \textbf{RIGHT JOIN}: All from right table plus matches
+    \item \textbf{FULL OUTER JOIN}: All records from both tables
+\end{itemize}
+
+---
+
+\subsection{Q9: How would you handle database backups?}
+
+\textbf{Answer:}
+
+\begin{lstlisting}[caption={Backup and Restore}]
+-- Backup database (from command line)
+mysqldump -u root -p medaithon57 > backup_2025_06_15.sql
+
+-- Restore database (from command line)
+mysql -u root -p medaithon57 < backup_2025_06_15.sql
+
+-- Backup specific table
+mysqldump -u root -p medaithon57 patients > 
+  patients_backup.sql
+\end{lstlisting}
+
+\textbf{Best Practices:}
+\begin{itemize}
+    \item Daily automated backups
+    \item Store backups in secure location
+    \item Test restore procedures regularly
+    \item Monitor disk space
+    \item Document backup schedule
+\end{itemize}
+
+---
+
+\subsection{Q10: What data validation would you add?}
+
+\textbf{Answer:}
+
+\begin{lstlisting}[caption={Data Validation Checks}]
+-- Check mobile number length
+ALTER TABLE callback_requests
+ADD CONSTRAINT check_mobile_length
+CHECK (LENGTH(mobile) >= 10);
+
+-- Check severity values
+ALTER TABLE patient_followups
+ADD CONSTRAINT check_severity
+CHECK (severity IN ('Low', 'Medium', 'High', 'Critical'));
+
+-- Prevent future dates for created_at
+ALTER TABLE patients
+ADD CONSTRAINT check_date
+CHECK (created_at <= CURRENT_TIMESTAMP);
+\end{lstlisting}
+
+\textbf{Validation Types:}
+\begin{itemize}
+    \item \textbf{Length checks}: Mobile number minimum digits
+    \item \textbf{Enumeration}: Valid severity levels only
+    \item \textbf{Date checks}: No future timestamps
+    \item \textbf{Type checks}: Correct data types
+    \item \textbf{Range checks}: Values within acceptable range
+\end{itemize}
+
+% ============================================================================
+\section{SQL Commands Reference}
+% ============================================================================
+
+\subsection{Data Definition Language (DDL)}
+
+\begin{lstlisting}[caption={DDL Commands}]
+-- Create database
+CREATE DATABASE medaithon57;
+
+-- Create table with constraints
+CREATE TABLE patients (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  uhid VARCHAR(50) NOT NULL UNIQUE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Modify table
+ALTER TABLE patients ADD COLUMN email VARCHAR(100);
+
+-- Delete table
+DROP TABLE patients;
+\end{lstlisting}
+
+---
+
+\subsection{Data Query Language (DQL)}
+
+\begin{lstlisting}[caption={DQL Commands}]
+-- Basic SELECT
+SELECT * FROM patients;
+
+-- Select specific columns
+SELECT uhid, created_at FROM patients;
+
+-- Filter with WHERE
+SELECT * FROM patients WHERE id = 1;
+
+-- Multiple conditions
+SELECT * FROM patients 
+WHERE created_at > DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+AND status = 'Active';
+
+-- ORDER BY
+SELECT * FROM patients ORDER BY created_at DESC;
+
+-- LIMIT
+SELECT * FROM patients LIMIT 10;
+\end{lstlisting}
+
+---
+
+\subsection{Aggregate Functions}
+
+\begin{lstlisting}[caption={Aggregation}]
+-- Count records
+SELECT COUNT(*) FROM patients;
+
+-- Group and count
+SELECT severity, COUNT(*) 
+FROM patient_followups 
+GROUP BY severity;
+
+-- Having clause (filter groups)
+SELECT severity, COUNT(*) AS cnt
+FROM patient_followups 
+GROUP BY severity
+HAVING cnt > 5;
+
+-- Multiple aggregates
+SELECT 
+  severity,
+  COUNT(*) AS count,
+  MAX(created_at) AS latest,
+  MIN(created_at) AS earliest
+FROM patient_followups
+GROUP BY severity;
+\end{lstlisting}
+
+% ============================================================================
+\section{Common Mistakes and Solutions}
+% ============================================================================
+
+\subsection{Mistake 1: SQL Injection Attack}
+
+\textbf{Problem:}
+\begin{lstlisting}
+-- UNSAFE! User input directly in query
+SELECT * FROM patients 
+WHERE uhid = '` + userInput + `';
+\end{lstlisting}
+
+\textbf{Solution:}
+\begin{lstlisting}
+-- SAFE! Use prepared statements
+PREPARE stmt FROM 'SELECT * FROM patients WHERE uhid = ?';
+EXECUTE stmt USING @uhid;
+\end{lstlisting}
+
+---
+
+\subsection{Mistake 2: Missing Indexes}
+
+\textbf{Problem:} Slow queries on large tables
+
+\textbf{Solution:}
+\begin{lstlisting}
+-- Add indexes on frequently searched columns
+CREATE INDEX idx_uhid ON patient_followups(uhid);
+CREATE INDEX idx_severity ON patient_followups(severity);
+CREATE INDEX idx_date ON patient_followups(created_at);
+\end{lstlisting}
+
+---
+
+\subsection{Mistake 3: SELECT * Wildcard}
+
+\textbf{Problem:} Slow performance, unnecessary data
+
+\textbf{Solution:}
+\begin{lstlisting}
+-- Specify only needed columns
+SELECT uhid, diagnosis, severity 
+FROM patient_followups;
+\end{lstlisting}
+
+---
+
+\subsection{Mistake 4: Lack of Error Handling}
+
+\textbf{Problem:} Silent failures, data inconsistency
+
+\textbf{Solution:}
+\begin{lstlisting}
+-- Use transactions and error handling
+START TRANSACTION;
+
+INSERT INTO patients (uhid) VALUES ('UH-2025-00003');
+
+IF @@error_count = 0 THEN
+  COMMIT;
+ELSE
+  ROLLBACK;
+END IF;
+\end{lstlisting}
+
+% ============================================================================
+\section{Summary and Key Takeaways}
+% ============================================================================
+
+\subsection{Project Overview}
+\begin{itemize}
+    \item \textbf{Goal:} Smart Hospital Management System
+    \item \textbf{Built in:} 50-hour hackathon
+    \item \textbf{Tech Stack:} Node.js backend, MySQL database, React frontend
+    \item \textbf{AI Feature:} Aorta AI trained model for disease detection
+\end{itemize}
+
+\subsection{Your Role}
+\begin{itemize}
+    \item \textbf{SQL Developer}: Design and manage database
+    \item \textbf{Query Writer}: Create efficient SQL queries
+    \item \textbf{Optimizer}: Ensure fast, reliable data access
+    \item \textbf{Data Custodian}: Ensure data integrity and security
+\end{itemize}
+
+\subsection{Database Highlights}
+\begin{enumerate}
+    \item \textbf{3 Main Tables}: callback\_requests, patients, patient\_followups
+    \item \textbf{Primary Key}: Auto-increment ID for uniqueness
+    \item \textbf{Foreign Relationship}: UHID links patients to follow-ups
+    \item \textbf{Constraints}: NOT NULL, UNIQUE, DEFAULT values
+\end{enumerate}
+
+\subsection{Key SQL Queries}
+\begin{itemize}
+    \item \textbf{Retrieval}: SELECT with WHERE, ORDER BY
+    \item \textbf{Analysis}: GROUP BY with COUNT aggregation
+    \item \textbf{Joins}: INNER JOIN to link related tables
+    \item \textbf{Filtering}: Multiple conditions for specific data
+\end{itemize}
+
+\subsection{Performance Tips}
+\begin{itemize}
+    \item Create indexes on frequently searched columns
+    \item Use specific column names instead of SELECT *
+    \item Use LIMIT to reduce returned rows
+    \item Write efficient JOIN queries
+    \item Monitor query execution time
+\end{itemize}
+
+% ============================================================================
+\end{document}
